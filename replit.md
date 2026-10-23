@@ -1,6 +1,6 @@
-# [Project name]
+# happysm
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A private, consent-first health and lifestyle companion for self-reported habits, educational reflections, and practical routines.
 
 ## Run & Operate
 
@@ -22,23 +22,36 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/happysm/` — React + Vite web app and Clerk auth routes
+- `artifacts/api-server/src/routes/healthProfile.ts` — authenticated profile, dashboard, and schedule routes
+- `artifacts/api-server/src/lib/healthGuidance.ts` — educational insight and schedule generation
+- `lib/db/src/schema/healthProfiles.ts` — user-owned profile records
+- `lib/api-spec/openapi.yaml` — source of truth for API contracts and generated hooks
+- `README.md` — setup, limitations, checks, and deployment notes
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Replit PostgreSQL and managed Clerk were selected for the MVP instead of Supabase, so ownership is enforced by authenticated server routes rather than Supabase RLS.
+- The app only presents educational reflections; it does not generate diagnoses, medical risk scores, or guaranteed outcomes.
+- Health profiles are not seeded with sample records, and profile writes require fresh consent.
+- BMI is displayed only when both height and weight exist, without health-category labels.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Users can sign in, consent to saving optional health and lifestyle details, review their own information, see limited educational insights, and receive a goal-based weekly routine.
+- PDF reports, email notifications, and the creator-only Validation Lab are intentionally outside the first MVP.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Explain major steps simply; the user is a beginner and expects incremental delivery.
+- Do not claim diagnoses, health risk scores, or guaranteed health outcomes.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Replit-managed Clerk supports email/password with email verification codes and GitHub when enabled; LinkedIn is not supported in this setup.
+- Do not expose profile data in logs or return it unless the request has a valid Clerk session.
+- Run API code generation after changing `lib/api-spec/openapi.yaml`.
+- Use Replit Publish for this setup; Vercel requires a deliberate auth, API, and database migration.
 
 ## Pointers
 

@@ -10,6 +10,10 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: profile
+    description: Private self-reported health and lifestyle information
+  - name: dashboard
+    description: Educational insights and routine suggestions
 paths:
   /healthz:
     get:
@@ -24,6 +28,71 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /health-profile:
+    get:
+      operationId: getHealthProfile
+      tags: [profile]
+      summary: Get the signed-in user's health profile
+      responses:
+        "200":
+          description: Health profile, or null when not yet completed
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/schemas/HealthProfile"
+                  - type: "null"
+        "401":
+          description: Authentication required
+    put:
+      operationId: saveHealthProfile
+      tags: [profile]
+      summary: Save the signed-in user's health profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HealthProfileInput"
+      responses:
+        "200":
+          description: Saved health profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthProfile"
+        "400":
+          description: Invalid profile data or consent was not granted
+        "401":
+          description: Authentication required
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get educational insights for the signed-in user's profile
+      responses:
+        "200":
+          description: Dashboard insights and BMI when enough data is available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponse"
+        "401":
+          description: Authentication required
+  /schedule:
+    get:
+      operationId: getSchedule
+      tags: [dashboard]
+      summary: Get practical routine suggestions based on the signed-in user's profile
+      responses:
+        "200":
+          description: Personalized weekly routine suggestions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeeklySchedule"
+        "401":
+          description: Authentication required
 components:
   schemas:
     HealthStatus:
@@ -33,4 +102,110 @@ components:
           type: string
       required:
         - status
+    HealthProfileInput:
+      type: object
+      properties:
+        ageYears:
+          type: ["integer", "null"]
+          minimum: 13
+          maximum: 120
+        heightCm:
+          type: ["number", "null"]
+          minimum: 80
+          maximum: 250
+        weightKg:
+          type: ["number", "null"]
+          minimum: 20
+          maximum: 400
+        sleepHours:
+          type: ["number", "null"]
+          minimum: 0
+          maximum: 24
+        waterGlasses:
+          type: ["integer", "null"]
+          minimum: 0
+          maximum: 40
+        activityLevel:
+          type: ["string", "null"]
+          enum: [low, some, active, null]
+        stressLevel:
+          type: ["string", "null"]
+          enum: [low, moderate, high, null]
+        goals:
+          type: array
+          items:
+            type: string
+            enum: [move-more, sleep-better, hydrate, manage-stress, build-routine]
+          maxItems: 5
+        consentAccepted:
+          type: boolean
+      required:
+        - ageYears
+        - heightCm
+        - weightKg
+        - sleepHours
+        - waterGlasses
+        - activityLevel
+        - stressLevel
+        - goals
+        - consentAccepted
+    HealthProfile:
+      allOf:
+        - $ref: "#/components/schemas/HealthProfileInput"
+        - type: object
+          properties:
+            consentedAt:
+              type: string
+              format: date-time
+          required:
+            - consentedAt
+    Insight:
+      type: object
+      properties:
+        title:
+          type: string
+        detail:
+          type: string
+        category:
+          type: string
+          enum: [movement, sleep, hydration, stress, general]
+      required: [title, detail, category]
+    RoutineDay:
+      type: object
+      properties:
+        day:
+          type: string
+        focus:
+          type: string
+        suggestions:
+          type: array
+          items:
+            type: string
+      required: [day, focus, suggestions]
+    WeeklySchedule:
+      type: object
+      properties:
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoutineDay"
+      required: [days]
+    DashboardResponse:
+      type: object
+      properties:
+        profile:
+          anyOf:
+            - $ref: "#/components/schemas/HealthProfile"
+            - type: "null"
+        bmi:
+          type: ["number", "null"]
+        insights:
+          type: array
+          items:
+            $ref: "#/components/schemas/Insight"
+        schedule:
+          $ref: "#/components/schemas/WeeklySchedule"
+        disclaimer:
+          type: string
+      required: [profile, bmi, insights, schedule, disclaimer]
 

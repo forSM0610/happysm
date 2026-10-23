@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="happysm">
+  <rect x="2" y="3" width="32" height="32" rx="16" fill="#315b4d"/>
+  <path d="M19.3 10.4v18.2M19.3 19.4c0-3.6 2.1-5.8 5.3-5.8 3 0 4.8 2.1 4.8 5.4v9.6" fill="none" stroke="#f8f5eb" stroke-width="2.8" stroke-linecap="round"/>
+  <text x="43" y="27" fill="#29433b" font-family="DM Sans, sans-serif" font-size="21" font-weight="700" letter-spacing="-1">happysm</text>
+</svg>
