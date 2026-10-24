@@ -33,6 +33,13 @@ app.use(
   }),
 );
 
+// Health profile and dashboard responses are user-specific. Prevent browsers
+// and intermediary caches from reusing them across account or session changes.
+app.use("/api", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
+
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use(cors());
 app.use(express.json());

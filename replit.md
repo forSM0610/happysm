@@ -4,8 +4,9 @@ A private, consent-first health and lifestyle companion for self-reported habits
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- The managed `artifacts/happysm: web` and `artifacts/api-server: API Server` workflows run the app. The API uses its workflow-provided port (8080 in this workspace); the web artifact supplies its own `PORT` and `BASE_PATH`.
 - `pnpm run typecheck` — full typecheck across all packages
+- `pnpm --filter @workspace/api-server run test` — API unit tests
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
@@ -18,7 +19,7 @@ A private, consent-first health and lifestyle companion for self-reported habits
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: esbuild (ES module server bundle)
 
 ## Where things live
 
